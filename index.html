@@ -1,0 +1,416 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+<meta charset="utf-8">
+<meta name="viewport" content="width=device-width, initial-scale=1">
+<title>ITI Apps Hub</title>
+<style>
+:root{--ink:#16202e;--mut:#5b6678;--line:#dde2ea;--bg:#f3f5f9;--pri:#1f4e8c;--pri2:#e7effb;--acc:#0e8f7a;--bad:#b42318;--warn:#9a5b00;--card:#fff}
+*{box-sizing:border-box}
+html{-webkit-text-size-adjust:100%}
+body{margin:0;font:15px/1.5 "Segoe UI",system-ui,-apple-system,Roboto,Arial,sans-serif;color:var(--ink);background:var(--bg);min-height:100vh}
+a{color:inherit}
+button{font:inherit;cursor:pointer}
+.top{background:linear-gradient(135deg,#17335c,#1f4e8c 60%,#0e8f7a);color:#fff;padding:22px 18px 26px}
+.wrap{max-width:1120px;margin:0 auto}
+.top .row1{display:flex;gap:12px;align-items:flex-start;justify-content:space-between;flex-wrap:wrap}
+.top h1{margin:0;font-size:26px;letter-spacing:.2px;line-height:1.2}
+.top p{margin:4px 0 0;opacity:.88}
+.ownerbar{display:flex;gap:8px;align-items:center;flex-wrap:wrap;justify-content:flex-end}
+.btn{border:1px solid #c9d1de;background:#fff;color:var(--ink);border-radius:8px;padding:7px 13px}
+.btn:hover{background:#eef2f8}
+.btn.pri{background:var(--pri);border-color:var(--pri);color:#fff;font-weight:600}
+.btn.pri:hover{background:#18407a}
+.btn.danger{background:var(--bad);border-color:var(--bad);color:#fff;font-weight:600}
+.btn.danger:disabled{opacity:.45;cursor:not-allowed}
+.btn.sm{padding:4px 9px;font-size:13px}
+.top .btn{background:rgba(255,255,255,.14);border-color:rgba(255,255,255,.45);color:#fff}
+.top .btn:hover{background:rgba(255,255,255,.26)}
+.top .btn.on{background:#fff;color:var(--pri);font-weight:700}
+.search{margin-top:18px;display:flex;gap:10px;flex-wrap:wrap}
+.search input{flex:1 1 260px;border:0;border-radius:10px;padding:12px 14px;font:inherit;outline:none;box-shadow:0 1px 3px rgba(0,0,0,.18)}
+.banner{max-width:1120px;margin:14px auto 0;padding:10px 14px;border-radius:9px;font-size:14px;display:none}
+.banner.show{display:block}
+.banner.warn{background:#fff3d9;color:var(--warn);border:1px solid #f0d28a}
+.banner.err{background:#fde7e5;color:var(--bad);border:1px solid #f3b9b3}
+.banner.info{background:var(--pri2);color:var(--pri);border:1px solid #bcd1f0}
+main.wrap{padding:18px}
+.toolbar{display:none;gap:8px;flex-wrap:wrap;background:#fff;border:1px dashed #9db6dc;border-radius:10px;padding:10px 12px;margin-bottom:14px;align-items:center}
+.toolbar.show{display:flex}
+.toolbar .lbl{font-weight:600;color:var(--pri);margin-right:6px}
+.chips{display:flex;gap:8px;flex-wrap:wrap;margin:2px 0 16px}
+.chip{border:1px solid var(--line);background:#fff;border-radius:99px;padding:5px 14px;font-size:14px;color:var(--mut)}
+.chip.on{background:var(--pri);border-color:var(--pri);color:#fff;font-weight:600}
+.count{color:var(--mut);font-size:13px;margin:0 0 10px}
+.grid{display:grid;grid-template-columns:repeat(auto-fill,minmax(260px,1fr));gap:14px}
+.card{background:var(--card);border:1px solid var(--line);border-radius:14px;padding:16px;display:flex;flex-direction:column;gap:8px;position:relative;transition:box-shadow .15s,transform .15s}
+.card:hover{box-shadow:0 6px 20px rgba(22,32,46,.10);transform:translateY(-2px)}
+.card.dim{opacity:.6;border-style:dashed}
+.ico{width:46px;height:46px;border-radius:12px;background:var(--pri2);display:flex;align-items:center;justify-content:center;font-size:25px}
+.card h3{margin:2px 0 0;font-size:17px;line-height:1.3}
+.card p{margin:0;color:var(--mut);font-size:14px;flex:1}
+.meta{display:flex;gap:6px;flex-wrap:wrap;align-items:center}
+.tag{font-size:12px;background:#eef1f6;color:var(--mut);border-radius:99px;padding:2px 9px}
+.tag.hid{background:#fff3d9;color:var(--warn)}
+.acts{display:flex;gap:8px;margin-top:4px}
+.acts .btn.open{flex:1;text-align:center;text-decoration:none;background:var(--pri);border-color:var(--pri);color:#fff;font-weight:600}
+.acts .btn.open:hover{background:#18407a}
+.edit{display:none;gap:5px;flex-wrap:wrap;border-top:1px solid var(--line);padding-top:8px;margin-top:4px}
+body.editing .edit{display:flex}
+.empty{background:#fff;border:1px dashed var(--line);border-radius:14px;padding:34px 18px;text-align:center;color:var(--mut)}
+footer{max-width:1120px;margin:10px auto 40px;padding:0 18px;color:var(--mut);font-size:13px;text-align:center}
+.modal{display:none;position:fixed;inset:0;background:rgba(15,22,34,.5);z-index:50;align-items:center;justify-content:center;padding:14px;overflow:auto}
+.modal.on{display:flex}
+.box{background:#fff;border-radius:14px;padding:20px 22px;max-width:520px;width:100%;box-shadow:0 14px 50px rgba(0,0,0,.35);max-height:94vh;overflow:auto}
+.box h2{margin:0 0 12px;font-size:18px}
+.box p{margin:0 0 12px;white-space:pre-line}
+label.f{display:block;font-size:13px;color:var(--mut);margin-bottom:10px}
+label.f input[type=text],label.f input[type=email],label.f input[type=password],label.f input[type=url],label.f textarea,label.f select,.box input.full{display:block;width:100%;margin-top:3px;font:inherit;color:var(--ink);border:1px solid #c5ccd8;border-radius:8px;padding:8px 10px;background:#fff}
+label.f textarea{min-height:70px;resize:vertical}
+input:focus,textarea:focus,select:focus{outline:2px solid #9ec0ee;border-color:var(--pri)}
+.two{display:grid;grid-template-columns:1fr 1fr;gap:10px}
+.emo{display:flex;gap:5px;flex-wrap:wrap;margin:4px 0 10px}
+.emo button{border:1px solid var(--line);background:#fff;border-radius:8px;font-size:20px;padding:2px 7px}
+.emo button.on{border-color:var(--pri);background:var(--pri2)}
+.foot{display:flex;gap:8px;justify-content:flex-end;margin-top:6px;flex-wrap:wrap}
+.err{color:var(--bad);font-size:13px;margin:-2px 0 8px;min-height:1em}
+.toast{position:fixed;left:50%;bottom:24px;transform:translateX(-50%);background:#16202e;color:#fff;border-radius:10px;padding:9px 16px;z-index:80;display:none;font-size:14px}
+.toast.on{display:block}
+@media(max-width:560px){.two{grid-template-columns:1fr}.top h1{font-size:22px}}
+</style>
+</head>
+<body>
+<header class="top"><div class="wrap">
+  <div class="row1">
+    <div><h1 id="hTitle">ITI Apps Hub</h1><p id="hSub">Apps and tools for instructors and trainees</p></div>
+    <div class="ownerbar" id="ownerBar"></div>
+  </div>
+  <div class="search"><input id="q" type="search" placeholder="Search apps…" autocomplete="off" aria-label="Search apps"></div>
+</div></header>
+<div class="banner" id="banner"></div>
+
+<main class="wrap">
+  <div class="toolbar" id="toolbar">
+    <span class="lbl">Edit mode</span>
+    <button class="btn pri sm" id="tAdd">+ Add app</button>
+    <button class="btn sm" id="tMeta">Page title</button>
+    <button class="btn sm" id="tStarter">Add starter apps</button>
+    <button class="btn sm" id="tExport">Export backup</button>
+    <button class="btn sm" id="tImport">Import backup</button>
+    <input type="file" id="fileImport" accept=".json" hidden>
+  </div>
+  <div class="chips" id="chips"></div>
+  <p class="count" id="count"></p>
+  <div class="grid" id="grid"></div>
+</main>
+<footer id="foot"></footer>
+
+<!-- dialogs -->
+<div class="modal" id="mConfirm"><div class="box"><h2 id="cTitle"></h2><p id="cMsg"></p><input class="full" id="cInput" autocomplete="off" hidden style="margin-bottom:12px"><div class="foot"><button class="btn" id="cNo">Cancel</button><button class="btn pri" id="cYes">OK</button></div></div></div>
+
+<div class="modal" id="mLogin"><form class="box" id="fLogin">
+  <h2>Owner sign-in</h2>
+  <p style="margin:0 0 12px;color:var(--mut,#556)">Sign in with the Google account that owns this hub. No password is stored here.</p>
+  <div class="err" id="lErr"></div>
+  <div class="foot"><button type="button" class="btn" id="lCancel">Cancel</button><button class="btn pri" id="lGo">Sign in with Google</button></div>
+</form></div>
+
+<div class="modal" id="mApp"><form class="box" id="fApp">
+  <h2 id="aHead">Add app</h2>
+  <label class="f">App name *<input type="text" id="aName" maxlength="80" required></label>
+  <label class="f">Link (URL) *<input type="text" id="aUrl" placeholder="https://…" required inputmode="url" autocapitalize="off"></label>
+  <label class="f">Short description<textarea id="aDesc" maxlength="240"></textarea></label>
+  <div class="two">
+    <label class="f">Category<input type="text" id="aCat" list="catList" maxlength="40" placeholder="e.g. Attendance"></label>
+    <label class="f">Icon (emoji)<input type="text" id="aIcon" maxlength="4"></label>
+  </div>
+  <datalist id="catList"></datalist>
+  <div class="emo" id="emo"></div>
+  <label class="f" style="display:flex;gap:8px;align-items:center;color:var(--ink)"><input type="checkbox" id="aVis"> Visible to everyone (untick to keep it as a hidden draft)</label>
+  <div class="err" id="aErr"></div>
+  <div class="foot"><button type="button" class="btn" id="aCancel">Cancel</button><button class="btn pri">Save</button></div>
+</form></div>
+
+<div class="modal" id="mMeta"><form class="box" id="fMeta">
+  <h2>Page title</h2>
+  <label class="f">Title<input type="text" id="mTitle" maxlength="60"></label>
+  <label class="f">Sub-title<input type="text" id="mSub" maxlength="120"></label>
+  <label class="f">Footer note (optional)<input type="text" id="mFoot" maxlength="160"></label>
+  <div class="foot"><button type="button" class="btn" id="mCancel">Cancel</button><button class="btn pri">Save</button></div>
+</form></div>
+<div class="toast" id="toast"></div>
+
+<script>
+/* ================= CONFIG: fill in after creating your Firebase project (see README) ================= */
+const CFG={
+  firebase:{apiKey:"AIzaSyD5ZJrAEK8WO9fEPhb_Jk8fU9WOQ_8NFl0",authDomain:"iti-staff-attendance.firebaseapp.com",projectId:"iti-staff-attendance",storageBucket:"iti-staff-attendance.firebasestorage.app",messagingSenderId:"753761046439",appId:"1:753761046439:web:017b0caca697ff936b3082"},
+  adminEmail:"",                       // the ONE email allowed to edit (must match firestore.rules)
+  appsCollection:"hubApps",
+  metaCollection:"hubMeta", metaDoc:"main",
+  sdk:"https://www.gstatic.com/firebasejs/10.14.1/"
+};
+if(window.HUB_CONFIG) Object.assign(CFG,window.HUB_CONFIG);   // used only for testing
+/* ===================================================================================================== */
+
+const $=s=>document.querySelector(s);
+const esc=s=>String(s==null?'':s).replace(/[&<>"']/g,c=>({'&':'&amp;','<':'&lt;','>':'&gt;','"':'&quot;',"'":'&#39;'}[c]));
+const DEFAULT_META={title:"ITI Apps Hub",sub:"Apps and tools for instructors and trainees",foot:""};
+const STARTERS=[
+  {name:"Annexure 2 & 3 Generator",url:"../annexure/",desc:"Enter internal assessment marks and print Annexure 2 and Annexure 3 for every learning outcome.",category:"Assessment",icon:"🧾",visible:true},
+  {name:"Staff Attendance Register",url:"https://dinojmkhan-afk.github.io/STAFFATTENDANCE/",desc:"Monthly staff attendance register for instructors with printable output.",category:"Attendance",icon:"🗓️",visible:true},
+  {name:"ALL ITI Admission Portal",url:"https://iti-portal-seven.vercel.app",desc:"Admission management for Kerala ITIs.",category:"Admissions",icon:"🏫",visible:true}
+];
+const EMOJI=["🧾","📋","📝","📊","🗓️","🏫","🎓","💻","🔧","🍽️","📚","✅","📢","🔗"];
+
+let apps=[],meta={...DEFAULT_META},editing=false,cat="All",qtext="",loadErr="";
+
+/* ---------- tiny UI helpers ---------- */
+function toast(msg){const t=$('#toast');t.textContent=msg;t.classList.add('on');clearTimeout(toast._t);toast._t=setTimeout(()=>t.classList.remove('on'),2200);}
+function openM(id){$(id).classList.add('on');}
+function closeM(id){$(id).classList.remove('on');}
+document.addEventListener('keydown',e=>{if(e.key==='Escape'){['#mLogin','#mApp','#mMeta'].forEach(closeM);}});
+function ask(o){
+  return new Promise(res=>{
+    const yes=$('#cYes'),no=$('#cNo'),inp=$('#cInput');
+    $('#cTitle').textContent=o.title||'Please confirm';$('#cMsg').textContent=o.msg||'';
+    yes.textContent=o.ok||'OK';yes.className='btn '+(o.danger?'danger':'pri');no.style.display=o.cancel===false?'none':'';
+    inp.hidden=!o.typed;inp.value='';inp.placeholder=o.typed?'Type '+o.typed+' to confirm':'';
+    const ok=()=>!o.typed||inp.value.trim()===o.typed, sync=()=>{yes.disabled=!ok();};sync();
+    const done=v=>{closeM('#mConfirm');yes.onclick=no.onclick=inp.oninput=null;document.removeEventListener('keydown',key);res(v);};
+    const key=e=>{if(e.key==='Escape')done(false);else if(e.key==='Enter'&&ok()){e.preventDefault();done(true);}};
+    document.addEventListener('keydown',key);inp.oninput=sync;yes.onclick=()=>{if(ok())done(true);};no.onclick=()=>done(false);
+    openM('#mConfirm');setTimeout(()=>(o.typed?inp:yes).focus(),30);
+  });
+}
+const notify=(msg,title)=>ask({msg,title:title||'Note',cancel:false});
+async function saveFile(name,text,mime){
+  try{if(window.claude&&claude.use){const d=await claude.use('downloads');if(d){await d.save({filename:name,data:text});return;}}}catch(e){if(e&&e.code==='declined')return;}
+  const a=document.createElement('a');a.href=URL.createObjectURL(new Blob([text],{type:mime}));a.download=name;document.body.appendChild(a);a.click();a.remove();
+}
+function cleanUrl(u){
+  u=String(u||'').trim();if(!u)return '';
+  if(!/^[a-z][a-z0-9+.-]*:/i.test(u))u='https://'+u;
+  try{const x=new URL(u);return (x.protocol==='https:'||x.protocol==='http:')?x.href:'';}catch(e){return '';}
+}
+
+/* ================= Data stores ================= */
+const sortApps=a=>a.sort((x,y)=>(x.order??0)-(y.order??0)||String(x.name).localeCompare(String(y.name)));
+let memDB=null;
+const LS='iti-apps-hub-v1';
+const Local={
+  mode:'local',user:null,
+  _r(){if(memDB)return memDB;try{memDB=JSON.parse(localStorage.getItem(LS))||{apps:[],meta:{}};}catch(e){memDB={apps:[],meta:{}};}return memDB;},
+  _w(){try{localStorage.setItem(LS,JSON.stringify(memDB));}catch(e){}},
+  isOwner(){return true;},
+  async init(){},
+  async list(){return sortApps(this._r().apps.map(a=>({...a})));},
+  async save(a){const d=this._r();if(a.id){const i=d.apps.findIndex(x=>x.id===a.id);if(i>=0)d.apps[i]={...d.apps[i],...a};}else{a={...a,id:'a'+Date.now().toString(36)+Math.random().toString(36).slice(2,6)};d.apps.push(a);}this._w();return a;},
+  async remove(id){const d=this._r();d.apps=d.apps.filter(a=>a.id!==id);this._w();},
+  async setOrders(pairs){const d=this._r();pairs.forEach(([id,o])=>{const a=d.apps.find(x=>x.id===id);if(a)a.order=o;});this._w();},
+  async getMeta(){return {...DEFAULT_META,...this._r().meta};},
+  async setMeta(m){const d=this._r();d.meta={...m};this._w();},
+  async replaceAll(list){const d=this._r();d.apps=list.map((a,i)=>({...a,id:'a'+Date.now().toString(36)+i}));this._w();},
+  onAuth(){},async signIn(){},async signOut(){}
+};
+
+const Fire={
+  mode:'firebase',user:null,offline:false,
+  async init(){
+    const b=CFG.sdk;
+    const [A,Au,F]=await Promise.all([import(b+'firebase-app.js'),import(b+'firebase-auth.js'),import(b+'firebase-firestore.js')]);
+    this.A=A;this.Au=Au;this.F=F;
+    this.app=A.initializeApp(CFG.firebase);this.auth=Au.getAuth(this.app);this.db=F.getFirestore(this.app);
+    this.col=F.collection(this.db,CFG.appsCollection);
+  },
+  isOwner(){const e=(this.user&&this.user.email||'').toLowerCase();return !!(e&&CFG.adminEmail&&e===CFG.adminEmail.toLowerCase());},
+  onAuth(cb){this.Au.onAuthStateChanged(this.auth,u=>{this.user=u;cb(u);});},
+  signIn(){const p=new this.Au.GoogleAuthProvider();p.setCustomParameters({prompt:'select_account'});return this.Au.signInWithPopup(this.auth,p);},
+  signOut(){return this.Au.signOut(this.auth);},
+  async list(){
+    const F=this.F,CK='iti-apps-hub-cache';
+    try{
+      const q=this.isOwner()?this.col:F.query(this.col,F.where('visible','==',true));
+      const s=await F.getDocs(q);
+      const out=sortApps(s.docs.map(d=>({id:d.id,...d.data()})));
+      this.offline=false;try{if(!this.isOwner())localStorage.setItem(CK,JSON.stringify(out));}catch(e){}
+      return out;
+    }catch(err){
+      let c=null;try{c=JSON.parse(localStorage.getItem(CK));}catch(e){}
+      if(c&&!this.isOwner()){this.offline=true;return c;}
+      throw err;
+    }
+  },
+  async save(a){
+    const F=this.F,{id,...data}=a;data.updatedAt=Date.now();
+    if(id){await F.setDoc(F.doc(this.db,CFG.appsCollection,id),data,{merge:true});return {...a};}
+    const r=await F.addDoc(this.col,data);return {...a,id:r.id};
+  },
+  async remove(id){await this.F.deleteDoc(this.F.doc(this.db,CFG.appsCollection,id));},
+  async setOrders(pairs){const F=this.F,b=F.writeBatch(this.db);pairs.forEach(([id,o])=>b.update(F.doc(this.db,CFG.appsCollection,id),{order:o}));await b.commit();},
+  async getMeta(){try{const s=await this.F.getDoc(this.F.doc(this.db,CFG.metaCollection,CFG.metaDoc));return {...DEFAULT_META,...(s.exists()?s.data():{})};}catch(e){return {...DEFAULT_META};}},
+  async setMeta(m){await this.F.setDoc(this.F.doc(this.db,CFG.metaCollection,CFG.metaDoc),m);},
+  async replaceAll(list){for(const a of list)await this.save({...a,id:undefined});}
+};
+const Dead={mode:'dead',user:null,isOwner:()=>false,list:async()=>[],getMeta:async()=>({...DEFAULT_META}),onAuth(){},signOut(){}};
+let Store=Local,initErr='';
+
+/* ================= rendering ================= */
+const owner=()=>Store.isOwner();
+function setBanner(kind,html){const b=$('#banner');if(!html){b.className='banner';b.innerHTML='';return;}b.className='banner show '+kind;b.innerHTML=html;}
+function banners(){
+  if(loadErr)return setBanner('err','Could not load the apps: '+esc(loadErr));
+  if(Store.mode==='local')return setBanner('warn','<b>Preview mode.</b> This page is not connected to Firebase, so anything you add is saved only in this browser. Connect Firebase (see README) to share it with everyone.');
+  if(Store.offline)return setBanner('info','You appear to be offline. Showing the last list saved on this device.');
+  if(Store.user&&!owner())return setBanner('warn','Signed in as '+esc(Store.user.email)+'. This account is not the owner, so editing is disabled.'+(CFG.adminEmail?'':' (adminEmail is not set in the page config.)'));
+  setBanner('','');
+}
+function ownerBar(){
+  const bar=$('#ownerBar');let h='';
+  if(Store.mode==='local'){
+    h=`<button class="btn ${editing?'on':''}" id="bEdit">✎ Edit mode ${editing?'on':'off'}</button>`;
+  }else if(Store.mode==='dead'){
+    h='';
+  }else if(!Store.user){
+    h=`<button class="btn" id="bLogin">Owner login</button>`;
+  }else{
+    if(owner())h+=`<button class="btn ${editing?'on':''}" id="bEdit">✎ Edit mode ${editing?'on':'off'}</button>`;
+    h+=`<button class="btn" id="bOut">Sign out</button>`;
+  }
+  bar.innerHTML=h;
+  $('#bEdit')&&($('#bEdit').onclick=()=>{editing=!editing;render();});
+  $('#bLogin')&&($('#bLogin').onclick=()=>{$('#lErr').textContent='';openM('#mLogin');setTimeout(()=>$('#lGo').focus(),30);});
+  $('#bOut')&&($('#bOut').onclick=async()=>{await Store.signOut();editing=false;});
+}
+function render(){
+  if(!owner())editing=false;
+  document.body.classList.toggle('editing',editing&&owner());
+  $('#toolbar').classList.toggle('show',editing&&owner());
+  $('#hTitle').textContent=meta.title||DEFAULT_META.title;$('#hSub').textContent=meta.sub||'';
+  document.title=meta.title||DEFAULT_META.title;
+  $('#foot').textContent=meta.foot||'';
+  banners();ownerBar();
+  const cats=[...new Set(apps.map(a=>a.category||'Other'))];
+  if(cat!=='All'&&!cats.includes(cat))cat='All';
+  $('#chips').innerHTML=cats.length>1?['All',...cats].map(c=>`<button class="chip ${c===cat?'on':''}" data-c="${esc(c)}">${esc(c)}</button>`).join(''):'';
+  const t=qtext.trim().toLowerCase();
+  const vis=apps.filter(a=>(cat==='All'||(a.category||'Other')===cat)&&(!t||[a.name,a.desc,a.category,a.url].join(' ').toLowerCase().includes(t)));
+  $('#count').textContent=apps.length?`${vis.length} of ${apps.length} app${apps.length===1?'':'s'}`:'';
+  if(!vis.length){
+    $('#grid').innerHTML=`<div class="empty" style="grid-column:1/-1">${apps.length?'No apps match your search.':(owner()&&editing?'No apps yet. Use “+ Add app” or “Add starter apps” above.':'No apps have been added yet.')}</div>`;return;
+  }
+  $('#grid').innerHTML=vis.map(a=>{
+    const i=apps.findIndex(x=>x.id===a.id),hid=a.visible===false;
+    return `<article class="card ${hid?'dim':''}" data-id="${esc(a.id)}">
+      <div class="ico">${esc(a.icon||'🔗')}</div>
+      <h3>${esc(a.name)}</h3>
+      <p>${esc(a.desc||'')}</p>
+      <div class="meta">${a.category?`<span class="tag">${esc(a.category)}</span>`:''}${hid?'<span class="tag hid">Hidden</span>':''}</div>
+      <div class="acts"><a class="btn open" href="${esc(a.url)}" target="_blank" rel="noopener noreferrer">Open ↗</a><button class="btn" data-act="copy" title="Copy link">Copy link</button></div>
+      <div class="edit">
+        <button class="btn sm" data-act="edit">✎ Edit</button>
+        <button class="btn sm" data-act="up" ${i===0?'disabled':''} title="Move earlier">▲</button>
+        <button class="btn sm" data-act="down" ${i===apps.length-1?'disabled':''} title="Move later">▼</button>
+        <button class="btn sm" data-act="vis">${hid?'Show':'Hide'}</button>
+        <button class="btn sm" data-act="del" style="color:var(--bad)">Delete</button>
+      </div></article>`;
+  }).join('');
+}
+async function reload(){
+  try{loadErr=initErr;apps=await Store.list();}catch(e){loadErr=e&&e.message?e.message:String(e);apps=[];}
+  try{meta=await Store.getMeta();}catch(e){}
+  render();
+}
+
+/* ================= actions ================= */
+async function guarded(fn){try{await fn();}catch(e){const m=(e&&e.code==='permission-denied')?'Permission denied. Only the owner account can change the apps (check firestore.rules and adminEmail).':(e&&e.message||String(e));await notify(m,'Could not save');}}
+let editId=null,pickedIcon='🔗';
+function openApp(a){
+  editId=a?a.id:null;$('#aHead').textContent=a?'Edit app':'Add app';
+  $('#aName').value=a?a.name:'';$('#aUrl').value=a?a.url:'';$('#aDesc').value=a?(a.desc||''):'';$('#aCat').value=a?(a.category||''):'';
+  pickedIcon=a?(a.icon||'🔗'):'🔗';$('#aIcon').value=pickedIcon;$('#aVis').checked=a?a.visible!==false:true;$('#aErr').textContent='';
+  $('#catList').innerHTML=[...new Set(apps.map(x=>x.category).filter(Boolean))].map(c=>`<option value="${esc(c)}">`).join('');
+  drawEmoji();openM('#mApp');setTimeout(()=>$('#aName').focus(),30);
+}
+function drawEmoji(){$('#emo').innerHTML=EMOJI.map(e=>`<button type="button" class="${e===$('#aIcon').value?'on':''}" data-e="${e}">${e}</button>`).join('');}
+$('#emo').onclick=e=>{const b=e.target.closest('button');if(!b)return;$('#aIcon').value=b.dataset.e;drawEmoji();};
+$('#aIcon').oninput=drawEmoji;
+$('#aCancel').onclick=()=>closeM('#mApp');
+$('#fApp').onsubmit=e=>{
+  e.preventDefault();
+  const name=$('#aName').value.trim(),url=cleanUrl($('#aUrl').value);
+  if(!name)return $('#aErr').textContent='Please enter the app name.';
+  if(!url)return $('#aErr').textContent='Please enter a valid web link (https://…).';
+  guarded(async()=>{
+    const cur=editId?apps.find(a=>a.id===editId):null;
+    const rec={...(cur||{}),name,url,desc:$('#aDesc').value.trim(),category:$('#aCat').value.trim(),icon:$('#aIcon').value.trim()||'🔗',visible:$('#aVis').checked};
+    if(!cur)rec.order=apps.length?Math.max(...apps.map(a=>a.order??0))+10:10;
+    await Store.save(rec);closeM('#mApp');await reload();toast(cur?'App updated':'App added');
+  });
+};
+$('#grid').onclick=e=>{
+  const b=e.target.closest('button[data-act]');if(!b)return;
+  const id=b.closest('.card').dataset.id,a=apps.find(x=>x.id===id),i=apps.findIndex(x=>x.id===id);
+  const act=b.dataset.act;
+  if(act==='copy'){
+    const done=()=>toast('Link copied');
+    if(navigator.clipboard&&navigator.clipboard.writeText)navigator.clipboard.writeText(a.url).then(done,()=>notify(a.url,'Copy this link'));else notify(a.url,'Copy this link');
+  }
+  if(!owner())return;
+  if(act==='edit')openApp(a);
+  if(act==='vis')guarded(async()=>{await Store.save({...a,visible:a.visible===false});await reload();});
+  if(act==='up'||act==='down')guarded(async()=>{
+    const j=act==='up'?i-1:i+1;if(j<0||j>=apps.length)return;
+    const list=apps.map((x,k)=>({id:x.id,o:(k+1)*10}));[list[i].o,list[j].o]=[list[j].o,list[i].o];
+    await Store.setOrders(list.map(x=>[x.id,x.o]));await reload();
+  });
+  if(act==='del')ask({title:'Delete app',msg:`Delete “${a.name}” from the hub? Visitors will no longer see it.`,danger:true,ok:'Delete'}).then(ok=>{if(ok)guarded(async()=>{await Store.remove(id);await reload();toast('App deleted');});});
+};
+$('#chips').onclick=e=>{const b=e.target.closest('.chip');if(!b)return;cat=b.dataset.c;render();};
+$('#q').oninput=e=>{qtext=e.target.value;render();};
+$('#tAdd').onclick=()=>openApp(null);
+$('#tMeta').onclick=()=>{$('#mTitle').value=meta.title||'';$('#mSub').value=meta.sub||'';$('#mFoot').value=meta.foot||'';openM('#mMeta');};
+$('#mCancel').onclick=()=>closeM('#mMeta');
+$('#fMeta').onsubmit=e=>{e.preventDefault();guarded(async()=>{await Store.setMeta({title:$('#mTitle').value.trim()||DEFAULT_META.title,sub:$('#mSub').value.trim(),foot:$('#mFoot').value.trim()});closeM('#mMeta');await reload();toast('Saved');});};
+$('#tStarter').onclick=async()=>{
+  const have=new Set(apps.map(a=>a.url));const add=STARTERS.filter(s=>!have.has(s.url));
+  if(!add.length)return notify('The starter apps are already in the list.');
+  if(!await ask({title:'Add starter apps',msg:'Add '+add.length+' of your existing apps ('+add.map(a=>a.name).join(', ')+')?\nYou can edit their links afterwards.',ok:'Add them'}))return;
+  guarded(async()=>{let o=apps.length?Math.max(...apps.map(a=>a.order??0)):0;for(const s of add){o+=10;await Store.save({...s,order:o});}await reload();toast('Starter apps added');});
+};
+$('#tExport').onclick=()=>saveFile('apps-hub-backup.json',JSON.stringify({meta,apps:apps.map(({id,...r})=>r)},null,1),'application/json');
+$('#tImport').onclick=()=>$('#fileImport').click();
+$('#fileImport').onchange=e=>{
+  const f=e.target.files[0];e.target.value='';if(!f)return;const r=new FileReader();
+  r.onload=async()=>{
+    let j;try{j=JSON.parse(r.result);if(!Array.isArray(j.apps))throw 0;}catch(x){return notify('That file is not a valid apps backup.');}
+    const have=new Set(apps.map(a=>a.url));const add=j.apps.filter(a=>a&&a.name&&cleanUrl(a.url)&&!have.has(cleanUrl(a.url)));
+    if(!add.length)return notify('Nothing new to import (all links are already in the list).');
+    if(!await ask({title:'Import backup',msg:'Add '+add.length+' app(s) from the backup? Existing apps are kept.',ok:'Import'}))return;
+    guarded(async()=>{let o=apps.length?Math.max(...apps.map(a=>a.order??0)):0;for(const a of add){o+=10;await Store.save({name:String(a.name),url:cleanUrl(a.url),desc:a.desc||'',category:a.category||'',icon:a.icon||'🔗',visible:a.visible!==false,order:o});}await reload();toast('Imported');});
+  };r.readAsText(f);
+};
+/* ---- login ---- */
+$('#lCancel').onclick=()=>closeM('#mLogin');
+const authMsg=c=>({'auth/popup-closed-by-user':'Sign-in was cancelled.','auth/cancelled-popup-request':'Sign-in was cancelled.','auth/popup-blocked':'The browser blocked the sign-in popup. Allow popups for this site and try again.','auth/unauthorized-domain':'This website address is not authorised in Firebase (Authentication > Settings > Authorized domains).','auth/operation-not-allowed':'Google sign-in is not enabled in Firebase (Authentication > Sign-in method).','auth/network-request-failed':'No internet connection.'}[c]||'Could not sign in.');
+$('#fLogin').onsubmit=async e=>{
+  e.preventDefault();$('#lErr').textContent='';$('#lGo').disabled=true;
+  try{await Store.signIn();closeM('#mLogin');}
+  catch(err){$('#lErr').textContent=authMsg(err&&err.code);}
+  $('#lGo').disabled=false;
+};
+
+/* ================= start ================= */
+(async function start(){
+  const configured=!!(CFG.firebase.apiKey&&CFG.firebase.projectId);
+  if(configured){
+    try{await Fire.init();Store=Fire;}
+    catch(e){initErr='Could not connect to Firebase ('+(e&&e.message||e)+'). Check your internet connection and the config.';Store=Dead;}
+  }
+  if(Store===Fire){
+    let first=true;
+    Fire.onAuth(async()=>{if(!first){editing=editing&&Fire.isOwner();}first=false;await reload();});
+  }else{await reload();}
+})();
+</script>
+</body>
+</html>
