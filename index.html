@@ -144,7 +144,7 @@ input:focus,textarea:focus,select:focus{outline:2px solid #9ec0ee;border-color:v
 /* ================= CONFIG: fill in after creating your Firebase project (see README) ================= */
 const CFG={
   firebase:{apiKey:"AIzaSyD5ZJrAEK8WO9fEPhb_Jk8fU9WOQ_8NFl0",authDomain:"iti-staff-attendance.firebaseapp.com",projectId:"iti-staff-attendance",storageBucket:"iti-staff-attendance.firebasestorage.app",messagingSenderId:"753761046439",appId:"1:753761046439:web:017b0caca697ff936b3082"},
-  adminEmail:"",                       // the ONE email allowed to edit (must match firestore.rules)
+  adminEmail:"dinojmkhan@gmail.com",                       // the ONE email allowed to edit (must match firestore.rules)
   appsCollection:"hubApps",
   metaCollection:"hubMeta", metaDoc:"main",
   sdk:"https://www.gstatic.com/firebasejs/10.14.1/"
@@ -156,7 +156,7 @@ const $=s=>document.querySelector(s);
 const esc=s=>String(s==null?'':s).replace(/[&<>"']/g,c=>({'&':'&amp;','<':'&lt;','>':'&gt;','"':'&quot;',"'":'&#39;'}[c]));
 const DEFAULT_META={title:"ITI Apps Hub",sub:"Apps and tools for instructors and trainees",foot:""};
 const STARTERS=[
-  {name:"Annexure 2 & 3 Generator",url:"../annexure/",desc:"Enter internal assessment marks and print Annexure 2 and Annexure 3 for every learning outcome.",category:"Assessment",icon:"🧾",visible:true},
+  {name:"Annexure 2 & 3 Generator",url:"https://dinojmkhan-afk.github.io/annexure-generator/",desc:"Enter internal assessment marks and print Annexure 2 and Annexure 3 for every learning outcome.",category:"Assessment",icon:"🧾",visible:true},
   {name:"Staff Attendance Register",url:"https://dinojmkhan-afk.github.io/STAFFATTENDANCE/",desc:"Monthly staff attendance register for instructors with printable output.",category:"Attendance",icon:"🗓️",visible:true},
   {name:"ALL ITI Admission Portal",url:"https://iti-portal-seven.vercel.app",desc:"Admission management for Kerala ITIs.",category:"Admissions",icon:"🏫",visible:true}
 ];
