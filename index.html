@@ -24,6 +24,7 @@ button{font:inherit;cursor:pointer}
 .btn.danger{background:var(--bad);border-color:var(--bad);color:#fff;font-weight:600}
 .btn.danger:disabled{opacity:.45;cursor:not-allowed}
 .btn.sm{padding:4px 9px;font-size:13px}
+.btn:disabled{cursor:not-allowed}
 .top .btn{background:rgba(255,255,255,.14);border-color:rgba(255,255,255,.45);color:#fff}
 .top .btn:hover{background:rgba(255,255,255,.26)}
 .top .btn.on{background:#fff;color:var(--pri);font-weight:700}
@@ -41,20 +42,54 @@ main.wrap{padding:18px}
 .chips{display:flex;gap:8px;flex-wrap:wrap;margin:2px 0 16px}
 .chip{border:1px solid var(--line);background:#fff;border-radius:99px;padding:5px 14px;font-size:14px;color:var(--mut)}
 .chip.on{background:var(--pri);border-color:var(--pri);color:#fff;font-weight:600}
-.count{color:var(--mut);font-size:13px;margin:0 0 10px}
+.bar2{display:flex;justify-content:space-between;align-items:center;gap:10px;flex-wrap:wrap;margin:0 0 12px}
+.count{color:var(--mut);font-size:13px;margin:0}
+.seg{display:inline-flex;border:1px solid var(--line);border-radius:9px;overflow:hidden;background:#fff}
+.seg button{border:0;background:#fff;padding:5px 13px;font-size:13px;color:var(--mut)}
+.seg button.on{background:var(--pri);color:#fff;font-weight:600}
 .grid{display:grid;grid-template-columns:repeat(auto-fill,minmax(260px,1fr));gap:14px}
+
+/* ---- stage colours ---- */
+.st-live{--sc:#0b7a68;--sb:#e3f5f1}
+.st-beta{--sc:#5b3fb5;--sb:#eee9fb}
+.st-dev{--sc:#9a5b00;--sb:#fff3d9}
+.st-planned{--sc:#2f5d99;--sb:#e7effb}
+.st-maintenance{--sc:#5b6678;--sb:#e6e8ec}
+.gh{grid-column:1/-1;margin:12px 0 0;padding-bottom:6px;font-size:17px;display:flex;align-items:baseline;gap:10px;flex-wrap:wrap;border-bottom:2px solid var(--sc)}
+.gh:first-child{margin-top:0}
+.gh .t{color:var(--sc)}
+.gh small{font-size:13px;font-weight:400;color:var(--mut)}
+
 .card{background:var(--card);border:1px solid var(--line);border-radius:14px;padding:16px;display:flex;flex-direction:column;gap:8px;position:relative;transition:box-shadow .15s,transform .15s}
 .card:hover{box-shadow:0 6px 20px rgba(22,32,46,.10);transform:translateY(-2px)}
 .card.dim{opacity:.6;border-style:dashed}
+.card.st-beta{border-color:#cfc4f0}
+.card.st-dev,.card.st-planned{border-style:dashed;border-color:var(--sc)}
+.card.st-maintenance{background:#eceef2;border-color:#cfd4dc}
+.card.st-maintenance:hover{transform:none;box-shadow:none}
+.card.st-maintenance .cb{filter:grayscale(1);opacity:.6}
+.cb{display:flex;flex-direction:column;gap:8px;flex:1}
+.ribbon{background:var(--sb);color:var(--sc);font-size:13px;font-weight:600;border-radius:8px;padding:5px 10px}
 .ico{width:46px;height:46px;border-radius:12px;background:var(--pri2);display:flex;align-items:center;justify-content:center;font-size:25px}
 .card h3{margin:2px 0 0;font-size:17px;line-height:1.3}
 .card p{margin:0;color:var(--mut);font-size:14px;flex:1}
+.card p.note{flex:none;font-size:13px;color:var(--sc);font-style:italic}
 .meta{display:flex;gap:6px;flex-wrap:wrap;align-items:center}
 .tag{font-size:12px;background:#eef1f6;color:var(--mut);border-radius:99px;padding:2px 9px}
 .tag.hid{background:#fff3d9;color:var(--warn)}
+.tag.st{background:var(--sb);color:var(--sc);font-weight:600}
+.tag.lk{background:#fff;border:1px solid #c5ccd8;color:var(--ink)}
+.steps{display:grid;grid-template-columns:repeat(4,1fr);gap:4px;margin-top:2px}
+.steps .s i{display:block;height:6px;border-radius:99px;background:#dfe4ec}
+.steps .s.on i{background:var(--sc)}
+.steps .s span{display:block;font-size:11px;color:var(--mut);margin-top:2px;text-align:center}
+.steps .s.cur span{color:var(--sc);font-weight:700}
 .acts{display:flex;gap:8px;margin-top:4px}
 .acts .btn.open{flex:1;text-align:center;text-decoration:none;background:var(--pri);border-color:var(--pri);color:#fff;font-weight:600}
 .acts .btn.open:hover{background:#18407a}
+.acts .btn.open.lockbtn{background:#fff;color:var(--pri)}
+.acts .btn.open.lockbtn:hover{background:var(--pri2)}
+.acts .btn.open.off,.acts .btn.open.off:hover{background:#dfe3e9;border-color:#d0d5dd;color:#6e7788;font-weight:500}
 .edit{display:none;gap:5px;flex-wrap:wrap;border-top:1px solid var(--line);padding-top:8px;margin-top:4px}
 body.editing .edit{display:flex}
 .empty{background:#fff;border:1px dashed var(--line);border-radius:14px;padding:34px 18px;text-align:center;color:var(--mut)}
@@ -68,6 +103,10 @@ label.f{display:block;font-size:13px;color:var(--mut);margin-bottom:10px}
 label.f input[type=text],label.f input[type=email],label.f input[type=password],label.f input[type=url],label.f textarea,label.f select,.box input.full{display:block;width:100%;margin-top:3px;font:inherit;color:var(--ink);border:1px solid #c5ccd8;border-radius:8px;padding:8px 10px;background:#fff}
 label.f textarea{min-height:70px;resize:vertical}
 input:focus,textarea:focus,select:focus{outline:2px solid #9ec0ee;border-color:var(--pri)}
+.hint{font-size:12.5px;color:var(--mut);margin:-4px 0 10px}
+.lockrow{display:flex;gap:8px;align-items:center;color:var(--ink)!important;font-weight:600}
+.lockbox{background:#f6f8fc;border:1px solid var(--line);border-radius:10px;padding:10px 12px;margin-bottom:10px}
+.lockbox label.f{margin-bottom:6px}
 .two{display:grid;grid-template-columns:1fr 1fr;gap:10px}
 .emo{display:flex;gap:5px;flex-wrap:wrap;margin:4px 0 10px}
 .emo button{border:1px solid var(--line);background:#fff;border-radius:8px;font-size:20px;padding:2px 7px}
@@ -100,7 +139,10 @@ input:focus,textarea:focus,select:focus{outline:2px solid #9ec0ee;border-color:v
     <input type="file" id="fileImport" accept=".json" hidden>
   </div>
   <div class="chips" id="chips"></div>
-  <p class="count" id="count"></p>
+  <div class="bar2">
+    <p class="count" id="count"></p>
+    <div class="seg" id="seg" aria-label="View"><button data-v="stage">By stage</button><button data-v="flat">All apps</button></div>
+  </div>
   <div class="grid" id="grid"></div>
 </main>
 <footer id="foot"></footer>
@@ -115,20 +157,44 @@ input:focus,textarea:focus,select:focus{outline:2px solid #9ec0ee;border-color:v
   <div class="foot"><button type="button" class="btn" id="lCancel">Cancel</button><button class="btn pri" id="lGo">Sign in with Google</button></div>
 </form></div>
 
+<div class="modal" id="mUnlock"><form class="box" id="fUnlock">
+  <h2>🔒 <span id="uName"></span></h2>
+  <p style="margin:0 0 10px;color:var(--mut)">This app is password protected. Enter the password you were given to open it.</p>
+  <label class="f">Password<input type="password" id="uPw" autocomplete="off"></label>
+  <div class="err" id="uErr"></div>
+  <div class="foot"><button type="button" class="btn" id="uCancel">Cancel</button><button class="btn pri" id="uGo">Unlock</button></div>
+</form></div>
+
 <div class="modal" id="mApp"><form class="box" id="fApp">
   <h2 id="aHead">Add app</h2>
-  <label class="f">App name *<input type="text" id="aName" maxlength="80" required></label>
-  <label class="f">Link (URL) *<input type="text" id="aUrl" placeholder="https://…" required inputmode="url" autocapitalize="off"></label>
+  <label class="f">App name *<input type="text" id="aName" maxlength="80"></label>
+  <label class="f">Link (URL)<input type="text" id="aUrl" placeholder="https://…" inputmode="url" autocapitalize="off"></label>
+  <div class="hint">Needed for Live, Beta and Under maintenance. Optional for Coming soon and In development.</div>
   <label class="f">Short description<textarea id="aDesc" maxlength="240"></textarea></label>
   <div class="two">
+    <label class="f">Stage
+      <select id="aStage">
+        <option value="planned">💡 Coming soon (planned)</option>
+        <option value="dev">🛠️ In development</option>
+        <option value="beta">🧪 Beta testing</option>
+        <option value="live">✅ Live</option>
+        <option value="maintenance">🔧 Under maintenance</option>
+      </select>
+    </label>
     <label class="f">Category<input type="text" id="aCat" list="catList" maxlength="40" placeholder="e.g. Attendance"></label>
-    <label class="f">Icon (emoji)<input type="text" id="aIcon" maxlength="4"></label>
   </div>
   <datalist id="catList"></datalist>
+  <label class="f">Status note (optional)<input type="text" id="aNote" maxlength="100" placeholder="e.g. Back on Monday / Testing with 5 instructors"></label>
+  <label class="f">Icon (emoji)<input type="text" id="aIcon" maxlength="4"></label>
   <div class="emo" id="emo"></div>
+  <label class="f lockrow"><input type="checkbox" id="aLockOn"> 🔒 Protect this link with a password</label>
+  <div class="lockbox" id="lockBox" hidden>
+    <label class="f">Password<input type="text" id="aPw" autocomplete="off" maxlength="60"></label>
+    <div class="hint" id="lockHint" style="margin-bottom:0"></div>
+  </div>
   <label class="f" style="display:flex;gap:8px;align-items:center;color:var(--ink)"><input type="checkbox" id="aVis"> Visible to everyone (untick to keep it as a hidden draft)</label>
   <div class="err" id="aErr"></div>
-  <div class="foot"><button type="button" class="btn" id="aCancel">Cancel</button><button class="btn pri">Save</button></div>
+  <div class="foot"><button type="button" class="btn" id="aCancel">Cancel</button><button class="btn pri" id="aSave">Save</button></div>
 </form></div>
 
 <div class="modal" id="mMeta"><form class="box" id="fMeta">
@@ -156,19 +222,33 @@ const $=s=>document.querySelector(s);
 const esc=s=>String(s==null?'':s).replace(/[&<>"']/g,c=>({'&':'&amp;','<':'&lt;','>':'&gt;','"':'&quot;',"'":'&#39;'}[c]));
 const DEFAULT_META={title:"ITI Apps Hub",sub:"Apps and tools for instructors and trainees",foot:""};
 const STARTERS=[
-  {name:"Annexure 2 & 3 Generator",url:"https://dinojmkhan-afk.github.io/annexure-generator/",desc:"Enter internal assessment marks and print Annexure 2 and Annexure 3 for every learning outcome.",category:"Assessment",icon:"🧾",visible:true},
-  {name:"Staff Attendance Register",url:"https://dinojmkhan-afk.github.io/STAFFATTENDANCE/",desc:"Monthly staff attendance register for instructors with printable output.",category:"Attendance",icon:"🗓️",visible:true},
-  {name:"ALL ITI Admission Portal",url:"https://iti-portal-seven.vercel.app",desc:"Admission management for Kerala ITIs.",category:"Admissions",icon:"🏫",visible:true}
+  {name:"Annexure 2 & 3 Generator",url:"https://dinojmkhan-afk.github.io/annexure-generator/",desc:"Enter internal assessment marks and print Annexure 2 and Annexure 3 for every learning outcome.",category:"Assessment",icon:"🧾",visible:true,status:"live"},
+  {name:"Staff Attendance Register",url:"https://dinojmkhan-afk.github.io/STAFFATTENDANCE/",desc:"Monthly staff attendance register for instructors with printable output.",category:"Attendance",icon:"🗓️",visible:true,status:"live"},
+  {name:"ALL ITI Admission Portal",url:"https://iti-portal-seven.vercel.app",desc:"Admission management for Kerala ITIs.",category:"Admissions",icon:"🏫",visible:true,status:"live"}
 ];
 const EMOJI=["🧾","📋","📝","📊","🗓️","🏫","🎓","💻","🔧","🍽️","📚","✅","📢","🔗"];
 
+/* stages: step = position on the Planned > Building > Beta > Live meter */
+const STAGES={
+  live:{label:'Live',icon:'✅',step:4,sub:'Ready to use'},
+  beta:{label:'Beta testing',icon:'🧪',step:3,sub:'Working, still being tested. Feedback welcome'},
+  dev:{label:'In development',icon:'🛠️',step:2,sub:'Being built, not ready yet'},
+  planned:{label:'Coming soon',icon:'💡',step:1,sub:'On the list'},
+  maintenance:{label:'Under maintenance',icon:'🔧',step:0,sub:'Temporarily unavailable'}
+};
+const STAGE_ORDER=['live','beta','dev','planned','maintenance'];
+const NEED_URL=['live','beta','maintenance'];
+const stOf=a=>STAGES[a&&a.status]?a.status:'live';
+
 let apps=[],meta={...DEFAULT_META},editing=false,cat="All",qtext="",loadErr="";
+let view='stage';try{view=localStorage.getItem('iti-hub-view')||'stage';}catch(e){}
+const unlocked={};   // id -> {c, url}  (kept in memory only, until the page is closed)
 
 /* ---------- tiny UI helpers ---------- */
 function toast(msg){const t=$('#toast');t.textContent=msg;t.classList.add('on');clearTimeout(toast._t);toast._t=setTimeout(()=>t.classList.remove('on'),2200);}
 function openM(id){$(id).classList.add('on');}
 function closeM(id){$(id).classList.remove('on');}
-document.addEventListener('keydown',e=>{if(e.key==='Escape'){['#mLogin','#mApp','#mMeta'].forEach(closeM);}});
+document.addEventListener('keydown',e=>{if(e.key==='Escape'){['#mLogin','#mApp','#mMeta','#mUnlock'].forEach(closeM);}});
 function ask(o){
   return new Promise(res=>{
     const yes=$('#cYes'),no=$('#cNo'),inp=$('#cInput');
@@ -192,6 +272,28 @@ function cleanUrl(u){
   if(!/^[a-z][a-z0-9+.-]*:/i.test(u))u='https://'+u;
   try{const x=new URL(u);return (x.protocol==='https:'||x.protocol==='http:')?x.href:'';}catch(e){return '';}
 }
+
+/* ================= Password lock (AES-GCM, key from password via PBKDF2) =================
+   The link of a protected app is stored ENCRYPTED. Without the password nobody (not even
+   someone reading the database) can see the link. Uses the browser's built-in crypto only. */
+const TE=new TextEncoder(),TD=new TextDecoder();
+const b64=u=>btoa(String.fromCharCode(...new Uint8Array(u)));
+const unb64=s=>Uint8Array.from(atob(s),c=>c.charCodeAt(0));
+async function deriveKey(pw,salt){
+  const m=await crypto.subtle.importKey('raw',TE.encode(pw),'PBKDF2',false,['deriveKey']);
+  return crypto.subtle.deriveKey({name:'PBKDF2',salt,iterations:150000,hash:'SHA-256'},m,{name:'AES-GCM',length:256},false,['encrypt','decrypt']);
+}
+async function lockUrl(url,pw){
+  const salt=crypto.getRandomValues(new Uint8Array(16)),iv=crypto.getRandomValues(new Uint8Array(12));
+  const k=await deriveKey(pw,salt),ct=await crypto.subtle.encrypt({name:'AES-GCM',iv},k,TE.encode(url));
+  return {s:b64(salt),i:b64(iv),c:b64(ct)};
+}
+async function unlockUrl(lock,pw){
+  const k=await deriveKey(pw,unb64(lock.s));
+  return TD.decode(await crypto.subtle.decrypt({name:'AES-GCM',iv:unb64(lock.i)},k,unb64(lock.c)));
+}
+const goodLock=l=>!!(l&&typeof l.s==='string'&&typeof l.i==='string'&&typeof l.c==='string');
+const urlOf=a=>a.lock?((unlocked[a.id]&&unlocked[a.id].c===a.lock.c)?unlocked[a.id].url:''):(a.url||'');
 
 /* ================= Data stores ================= */
 const sortApps=a=>a.sort((x,y)=>(x.order??0)-(y.order??0)||String(x.name).localeCompare(String(y.name)));
@@ -281,6 +383,46 @@ function ownerBar(){
   $('#bLogin')&&($('#bLogin').onclick=()=>{$('#lErr').textContent='';openM('#mLogin');setTimeout(()=>$('#lGo').focus(),30);});
   $('#bOut')&&($('#bOut').onclick=async()=>{await Store.signOut();editing=false;});
 }
+/* the list an app moves inside when ▲/▼ is pressed (same stage in "By stage" view) */
+const pool=a=>view==='stage'?apps.filter(x=>stOf(x)===stOf(a)):apps;
+
+function actsHtml(a,s){
+  const canOpen=s==='live'||s==='beta'||(s==='dev'&&(a.url||a.lock));
+  if(!canOpen){
+    const t=s==='maintenance'?'🔧 Temporarily unavailable':s==='planned'?'💡 Coming soon':'🛠️ Not ready yet';
+    return `<div class="acts"><button class="btn open off" disabled>${t}</button></div>`;
+  }
+  const u=urlOf(a);
+  if(!u)return `<div class="acts"><button class="btn open lockbtn" data-act="unlock">🔒 Enter password to open</button></div>`;
+  return `<div class="acts"><a class="btn open" href="${esc(u)}" target="_blank" rel="noopener noreferrer">${s==='dev'?'Preview ↗':'Open ↗'}</a><button class="btn" data-act="copy" title="Copy link">Copy link</button></div>`;
+}
+function stepsHtml(s){
+  const step=STAGES[s].step;if(s==='live'||s==='maintenance')return '';
+  return `<div class="steps" title="Stage: ${esc(STAGES[s].label)}">`+['Planned','Building','Beta','Live'].map((l,k)=>`<div class="s ${k+1<=step?'on':''} ${k+1===step?'cur':''}"><i></i><span>${l}</span></div>`).join('')+`</div>`;
+}
+function cardHtml(a){
+  const s=stOf(a),S=STAGES[s],hid=a.visible===false,P=pool(a),k=P.findIndex(x=>x.id===a.id);
+  const ribbon=s==='maintenance'?`<div class="ribbon">🔧 Under maintenance${a.note?' · '+esc(a.note):''}</div>`:'';
+  const note=(s!=='maintenance'&&a.note)?`<p class="note">${esc(a.note)}</p>`:'';
+  return `<article class="card st-${s} ${hid?'dim':''}" data-id="${esc(a.id)}">
+    ${ribbon}
+    <div class="cb">
+      <div class="ico">${esc(a.icon||'🔗')}</div>
+      <h3>${esc(a.name)}</h3>
+      <p>${esc(a.desc||'')}</p>${note}
+      <div class="meta"><span class="tag st">${S.icon} ${S.label}</span>${a.category?`<span class="tag">${esc(a.category)}</span>`:''}${a.lock?'<span class="tag lk">🔒 Password</span>':''}${hid?'<span class="tag hid">Hidden</span>':''}</div>
+      ${stepsHtml(s)}
+    </div>
+    ${actsHtml(a,s)}
+    <div class="edit">
+      <button class="btn sm" data-act="edit">✎ Edit</button>
+      <button class="btn sm" data-act="up" ${k<=0?'disabled':''} title="Move earlier">▲</button>
+      <button class="btn sm" data-act="down" ${k>=P.length-1?'disabled':''} title="Move later">▼</button>
+      <button class="btn sm" data-act="maint">${s==='maintenance'?'✔ Back online':'🔧 Maintenance'}</button>
+      <button class="btn sm" data-act="vis">${hid?'Show':'Hide'}</button>
+      <button class="btn sm" data-act="del" style="color:var(--bad)">Delete</button>
+    </div></article>`;
+}
 function render(){
   if(!owner())editing=false;
   document.body.classList.toggle('editing',editing&&owner());
@@ -289,31 +431,24 @@ function render(){
   document.title=meta.title||DEFAULT_META.title;
   $('#foot').textContent=meta.foot||'';
   banners();ownerBar();
+  [...$('#seg').children].forEach(b=>b.classList.toggle('on',b.dataset.v===view));
   const cats=[...new Set(apps.map(a=>a.category||'Other'))];
   if(cat!=='All'&&!cats.includes(cat))cat='All';
   $('#chips').innerHTML=cats.length>1?['All',...cats].map(c=>`<button class="chip ${c===cat?'on':''}" data-c="${esc(c)}">${esc(c)}</button>`).join(''):'';
   const t=qtext.trim().toLowerCase();
-  const vis=apps.filter(a=>(cat==='All'||(a.category||'Other')===cat)&&(!t||[a.name,a.desc,a.category,a.url].join(' ').toLowerCase().includes(t)));
+  const vis=apps.filter(a=>(cat==='All'||(a.category||'Other')===cat)&&(!t||[a.name,a.desc,a.category,a.note,STAGES[stOf(a)].label,a.url].join(' ').toLowerCase().includes(t)));
   $('#count').textContent=apps.length?`${vis.length} of ${apps.length} app${apps.length===1?'':'s'}`:'';
   if(!vis.length){
     $('#grid').innerHTML=`<div class="empty" style="grid-column:1/-1">${apps.length?'No apps match your search.':(owner()&&editing?'No apps yet. Use “+ Add app” or “Add starter apps” above.':'No apps have been added yet.')}</div>`;return;
   }
-  $('#grid').innerHTML=vis.map(a=>{
-    const i=apps.findIndex(x=>x.id===a.id),hid=a.visible===false;
-    return `<article class="card ${hid?'dim':''}" data-id="${esc(a.id)}">
-      <div class="ico">${esc(a.icon||'🔗')}</div>
-      <h3>${esc(a.name)}</h3>
-      <p>${esc(a.desc||'')}</p>
-      <div class="meta">${a.category?`<span class="tag">${esc(a.category)}</span>`:''}${hid?'<span class="tag hid">Hidden</span>':''}</div>
-      <div class="acts"><a class="btn open" href="${esc(a.url)}" target="_blank" rel="noopener noreferrer">Open ↗</a><button class="btn" data-act="copy" title="Copy link">Copy link</button></div>
-      <div class="edit">
-        <button class="btn sm" data-act="edit">✎ Edit</button>
-        <button class="btn sm" data-act="up" ${i===0?'disabled':''} title="Move earlier">▲</button>
-        <button class="btn sm" data-act="down" ${i===apps.length-1?'disabled':''} title="Move later">▼</button>
-        <button class="btn sm" data-act="vis">${hid?'Show':'Hide'}</button>
-        <button class="btn sm" data-act="del" style="color:var(--bad)">Delete</button>
-      </div></article>`;
-  }).join('');
+  let html='';
+  if(view==='stage'){
+    STAGE_ORDER.forEach(s=>{
+      const l=vis.filter(a=>stOf(a)===s);if(!l.length)return;
+      html+=`<h2 class="gh st-${s}"><span class="t">${STAGES[s].icon} ${STAGES[s].label}</span><small>${l.length} · ${STAGES[s].sub}</small></h2>`+l.map(cardHtml).join('');
+    });
+  }else html=vis.map(cardHtml).join('');
+  $('#grid').innerHTML=html;
 }
 async function reload(){
   try{loadErr=initErr;apps=await Store.list();}catch(e){loadErr=e&&e.message?e.message:String(e);apps=[];}
@@ -323,56 +458,126 @@ async function reload(){
 
 /* ================= actions ================= */
 async function guarded(fn){try{await fn();}catch(e){const m=(e&&e.code==='permission-denied')?'Permission denied. Only the owner account can change the apps (check firestore.rules and adminEmail).':(e&&e.message||String(e));await notify(m,'Could not save');}}
-let editId=null,pickedIcon='🔗';
+let editId=null;
+const curApp=()=>editId?apps.find(a=>a.id===editId):null;
+function syncLock(){
+  const on=$('#aLockOn').checked,L=(curApp()||{}).lock;
+  $('#lockBox').hidden=!on;
+  $('#lockHint').textContent=L
+    ?'The link is hidden. Leave the link and password empty to keep both. To change the link, type the new link above and the password here. To set a new password, type the link again too.'
+    :'Visitors must enter this password before they can see or open the link. The link is saved encrypted, so it cannot be read from the page or the database. Tell the password only to the people who should have access.';
+}
 function openApp(a){
   editId=a?a.id:null;$('#aHead').textContent=a?'Edit app':'Add app';
-  $('#aName').value=a?a.name:'';$('#aUrl').value=a?a.url:'';$('#aDesc').value=a?(a.desc||''):'';$('#aCat').value=a?(a.category||''):'';
-  pickedIcon=a?(a.icon||'🔗'):'🔗';$('#aIcon').value=pickedIcon;$('#aVis').checked=a?a.visible!==false:true;$('#aErr').textContent='';
+  const L=a&&a.lock;
+  $('#aName').value=a?a.name:'';$('#aUrl').value=a?(a.url||''):'';$('#aUrl').placeholder=L?'🔒 Hidden. Leave empty to keep it':'https://…';
+  $('#aDesc').value=a?(a.desc||''):'';$('#aCat').value=a?(a.category||''):'';
+  $('#aStage').value=a?stOf(a):'live';$('#aNote').value=a?(a.note||''):'';
+  $('#aIcon').value=a?(a.icon||'🔗'):'🔗';$('#aVis').checked=a?a.visible!==false:true;$('#aErr').textContent='';
+  $('#aLockOn').checked=!!L;$('#aPw').value='';syncLock();
   $('#catList').innerHTML=[...new Set(apps.map(x=>x.category).filter(Boolean))].map(c=>`<option value="${esc(c)}">`).join('');
   drawEmoji();openM('#mApp');setTimeout(()=>$('#aName').focus(),30);
 }
 function drawEmoji(){$('#emo').innerHTML=EMOJI.map(e=>`<button type="button" class="${e===$('#aIcon').value?'on':''}" data-e="${e}">${e}</button>`).join('');}
 $('#emo').onclick=e=>{const b=e.target.closest('button');if(!b)return;$('#aIcon').value=b.dataset.e;drawEmoji();};
 $('#aIcon').oninput=drawEmoji;
+$('#aLockOn').onchange=syncLock;
 $('#aCancel').onclick=()=>closeM('#mApp');
-$('#fApp').onsubmit=e=>{
+$('#fApp').onsubmit=async e=>{
   e.preventDefault();
-  const name=$('#aName').value.trim(),url=cleanUrl($('#aUrl').value);
-  if(!name)return $('#aErr').textContent='Please enter the app name.';
-  if(!url)return $('#aErr').textContent='Please enter a valid web link (https://…).';
-  guarded(async()=>{
-    const cur=editId?apps.find(a=>a.id===editId):null;
-    const rec={...(cur||{}),name,url,desc:$('#aDesc').value.trim(),category:$('#aCat').value.trim(),icon:$('#aIcon').value.trim()||'🔗',visible:$('#aVis').checked};
-    if(!cur)rec.order=apps.length?Math.max(...apps.map(a=>a.order??0))+10:10;
-    await Store.save(rec);closeM('#mApp');await reload();toast(cur?'App updated':'App added');
-  });
+  const err=m=>{$('#aErr').textContent=m;};err('');
+  const name=$('#aName').value.trim(),raw=$('#aUrl').value.trim(),typed=cleanUrl(raw);
+  const st=$('#aStage').value,lockOn=$('#aLockOn').checked,pw=$('#aPw').value;
+  const cur=curApp(),curLock=cur&&cur.lock||null;
+  if(!name)return err('Please enter the app name.');
+  if(raw&&!typed)return err('Please enter a valid web link (https://…).');
+  let url=typed,lock=null;
+  $('#aSave').disabled=true;
+  try{
+    if(lockOn){
+      if(!(window.crypto&&crypto.subtle))return err('Password protection needs the secure web address (https). Open the live site to use it.');
+      if(curLock){
+        if(url){
+          if(!pw)return err('Type the password to save the new link.');
+          if(pw.length<4)return err('The password must have at least 4 characters.');
+          lock=await lockUrl(url,pw);url='';
+        }else if(pw){
+          try{await unlockUrl(curLock,pw);lock=curLock;}
+          catch(x){return err('That is not the current password. To set a new password, type the link again too.');}
+        }else lock=curLock;
+      }else{
+        if(!url)return err('Please enter the link you want to protect.');
+        if(pw.length<4)return err('Choose a password of at least 4 characters.');
+        lock=await lockUrl(url,pw);url='';
+      }
+    }else{
+      if(curLock&&!url){
+        if(!pw)return err('To remove the password, enter the current password here (or type the link again).');
+        try{url=await unlockUrl(curLock,pw);}catch(x){return err('That password is wrong.');}
+      }
+      if(!url&&NEED_URL.includes(st))return err('Please enter the app link (https://…).');
+    }
+    await guarded(async()=>{
+      const rec={...(cur||{}),name,url,lock,desc:$('#aDesc').value.trim(),category:$('#aCat').value.trim(),icon:$('#aIcon').value.trim()||'🔗',visible:$('#aVis').checked,status:st,note:$('#aNote').value.trim()};
+      if(!cur)rec.order=apps.length?Math.max(...apps.map(a=>a.order??0))+10:10;
+      await Store.save(rec);delete unlocked[rec.id||''];closeM('#mApp');await reload();toast(cur?'App updated':'App added');
+    });
+  }finally{$('#aSave').disabled=false;}
 };
+
+/* ---- unlock dialog (for visitors) ---- */
+let unlockId=null;
+function openUnlock(a){unlockId=a.id;$('#uName').textContent=a.name;$('#uPw').value='';$('#uErr').textContent='';openM('#mUnlock');setTimeout(()=>$('#uPw').focus(),30);}
+$('#uCancel').onclick=()=>closeM('#mUnlock');
+$('#fUnlock').onsubmit=async e=>{
+  e.preventDefault();
+  const a=apps.find(x=>x.id===unlockId);if(!a||!a.lock)return;
+  const go=$('#uGo');go.disabled=true;$('#uErr').textContent='';
+  try{
+    const u=cleanUrl(await unlockUrl(a.lock,$('#uPw').value));if(!u)throw 0;
+    unlocked[a.id]={c:a.lock.c,url:u};closeM('#mUnlock');render();toast('Unlocked. Tap Open.');
+  }catch(x){
+    $('#uErr').textContent=(window.crypto&&crypto.subtle)?'Wrong password. Please try again.':'Password check needs the secure (https) web address.';
+  }
+  go.disabled=false;
+};
+
 $('#grid').onclick=e=>{
-  const b=e.target.closest('button[data-act]');if(!b)return;
-  const id=b.closest('.card').dataset.id,a=apps.find(x=>x.id===id),i=apps.findIndex(x=>x.id===id);
+  const b=e.target.closest('button[data-act]');if(!b||b.disabled)return;
+  const id=b.closest('.card').dataset.id,a=apps.find(x=>x.id===id);if(!a)return;
   const act=b.dataset.act;
   if(act==='copy'){
-    const done=()=>toast('Link copied');
-    if(navigator.clipboard&&navigator.clipboard.writeText)navigator.clipboard.writeText(a.url).then(done,()=>notify(a.url,'Copy this link'));else notify(a.url,'Copy this link');
+    const u=urlOf(a),done=()=>toast('Link copied');
+    if(navigator.clipboard&&navigator.clipboard.writeText)navigator.clipboard.writeText(u).then(done,()=>notify(u,'Copy this link'));else notify(u,'Copy this link');
   }
+  if(act==='unlock')openUnlock(a);
   if(!owner())return;
   if(act==='edit')openApp(a);
   if(act==='vis')guarded(async()=>{await Store.save({...a,visible:a.visible===false});await reload();});
+  if(act==='maint')guarded(async()=>{
+    const s=stOf(a),back=(a.prevStatus&&a.prevStatus!=='maintenance'&&STAGES[a.prevStatus])?a.prevStatus:'live';
+    await Store.save(s==='maintenance'?{...a,status:back}:{...a,prevStatus:s,status:'maintenance'});
+    await reload();toast(s==='maintenance'?'Back online':'Marked under maintenance');
+  });
   if(act==='up'||act==='down')guarded(async()=>{
-    const j=act==='up'?i-1:i+1;if(j<0||j>=apps.length)return;
-    const list=apps.map((x,k)=>({id:x.id,o:(k+1)*10}));[list[i].o,list[j].o]=[list[j].o,list[i].o];
+    const P=pool(a),k=P.findIndex(x=>x.id===id),t=P[act==='up'?k-1:k+1];if(!t)return;
+    const list=apps.map((x,n)=>({id:x.id,o:(n+1)*10}));
+    const A=list.find(x=>x.id===id),B=list.find(x=>x.id===t.id);[A.o,B.o]=[B.o,A.o];
     await Store.setOrders(list.map(x=>[x.id,x.o]));await reload();
   });
   if(act==='del')ask({title:'Delete app',msg:`Delete “${a.name}” from the hub? Visitors will no longer see it.`,danger:true,ok:'Delete'}).then(ok=>{if(ok)guarded(async()=>{await Store.remove(id);await reload();toast('App deleted');});});
 };
 $('#chips').onclick=e=>{const b=e.target.closest('.chip');if(!b)return;cat=b.dataset.c;render();};
+$('#seg').onclick=e=>{const b=e.target.closest('button');if(!b)return;view=b.dataset.v;try{localStorage.setItem('iti-hub-view',view);}catch(x){}render();};
 $('#q').oninput=e=>{qtext=e.target.value;render();};
 $('#tAdd').onclick=()=>openApp(null);
 $('#tMeta').onclick=()=>{$('#mTitle').value=meta.title||'';$('#mSub').value=meta.sub||'';$('#mFoot').value=meta.foot||'';openM('#mMeta');};
 $('#mCancel').onclick=()=>closeM('#mMeta');
 $('#fMeta').onsubmit=e=>{e.preventDefault();guarded(async()=>{await Store.setMeta({title:$('#mTitle').value.trim()||DEFAULT_META.title,sub:$('#mSub').value.trim(),foot:$('#mFoot').value.trim()});closeM('#mMeta');await reload();toast('Saved');});};
+/* identity of an app for "already in the list" checks */
+const keyOf=a=>a.lock?'L'+a.lock.c:(cleanUrl(a.url)||'N'+String(a.name).toLowerCase());
 $('#tStarter').onclick=async()=>{
-  const have=new Set(apps.map(a=>a.url));const add=STARTERS.filter(s=>!have.has(s.url));
+  const have=new Set(apps.map(keyOf));const add=STARTERS.filter(s=>!have.has(keyOf(s)));
   if(!add.length)return notify('The starter apps are already in the list.');
   if(!await ask({title:'Add starter apps',msg:'Add '+add.length+' of your existing apps ('+add.map(a=>a.name).join(', ')+')?\nYou can edit their links afterwards.',ok:'Add them'}))return;
   guarded(async()=>{let o=apps.length?Math.max(...apps.map(a=>a.order??0)):0;for(const s of add){o+=10;await Store.save({...s,order:o});}await reload();toast('Starter apps added');});
@@ -383,10 +588,11 @@ $('#fileImport').onchange=e=>{
   const f=e.target.files[0];e.target.value='';if(!f)return;const r=new FileReader();
   r.onload=async()=>{
     let j;try{j=JSON.parse(r.result);if(!Array.isArray(j.apps))throw 0;}catch(x){return notify('That file is not a valid apps backup.');}
-    const have=new Set(apps.map(a=>a.url));const add=j.apps.filter(a=>a&&a.name&&cleanUrl(a.url)&&!have.has(cleanUrl(a.url)));
-    if(!add.length)return notify('Nothing new to import (all links are already in the list).');
+    const have=new Set(apps.map(keyOf));
+    const add=j.apps.filter(a=>a&&a.name&&(goodLock(a.lock)||cleanUrl(a.url)||STAGES[a.status])&&!have.has(keyOf(a)));
+    if(!add.length)return notify('Nothing new to import (all apps are already in the list).');
     if(!await ask({title:'Import backup',msg:'Add '+add.length+' app(s) from the backup? Existing apps are kept.',ok:'Import'}))return;
-    guarded(async()=>{let o=apps.length?Math.max(...apps.map(a=>a.order??0)):0;for(const a of add){o+=10;await Store.save({name:String(a.name),url:cleanUrl(a.url),desc:a.desc||'',category:a.category||'',icon:a.icon||'🔗',visible:a.visible!==false,order:o});}await reload();toast('Imported');});
+    guarded(async()=>{let o=apps.length?Math.max(...apps.map(a=>a.order??0)):0;for(const a of add){o+=10;const lk=goodLock(a.lock);await Store.save({name:String(a.name),url:lk?'':cleanUrl(a.url),lock:lk?{s:a.lock.s,i:a.lock.i,c:a.lock.c}:null,desc:a.desc||'',category:a.category||'',icon:a.icon||'🔗',visible:a.visible!==false,status:STAGES[a.status]?a.status:'live',note:a.note||'',order:o});}await reload();toast('Imported');});
   };r.readAsText(f);
 };
 /* ---- login ---- */
