@@ -108,6 +108,17 @@ input:focus,textarea:focus,select:focus{outline:2px solid #9ec0ee;border-color:v
 .guide p,.guide li{font-size:14px;line-height:1.7}
 .guide ol,.guide ul{margin:0 0 6px;padding-left:20px}
 .guide .aiG{background:#eef2f8;border-radius:9px;padding:8px 12px;margin-top:12px}
+.cwrap{display:flex;flex-direction:column;gap:6px}
+.cbtn{width:100%;text-align:left;background:#f6f8fc}
+.cpanel{border-top:1px solid var(--line);padding-top:8px;display:flex;flex-direction:column;gap:8px}
+.cm{background:#f6f8fc;border-radius:9px;padding:7px 10px;font-size:13.5px;word-break:break-word}
+.cm .h{display:flex;gap:8px;align-items:baseline;flex-wrap:wrap}
+.cm .h small{color:var(--mut);font-size:12px}
+.cm .h .x{margin-left:auto;border:0;background:none;color:var(--bad);font-size:12.5px;padding:0}
+.cm .t{white-space:pre-wrap}
+.cnone{color:var(--mut);font-size:13px}
+.cform input,.cform textarea{display:block;width:100%;font:inherit;font-size:14px;border:1px solid #c5ccd8;border-radius:8px;padding:6px 9px;margin-bottom:6px}
+.cform textarea{min-height:58px;resize:vertical}
 .hint{font-size:12.5px;color:var(--mut);margin:-4px 0 10px}
 .lockrow{display:flex;gap:8px;align-items:center;color:var(--ink)!important;font-weight:600}
 .lockbox{background:#f6f8fc;border:1px solid var(--line);border-radius:10px;padding:10px 12px;margin-bottom:10px}
@@ -172,6 +183,7 @@ input:focus,textarea:focus,select:focus{outline:2px solid #9ec0ee;border-color:v
     <li><b>Search</b> box-ൽ app-ന്റെ പേര് ടൈപ്പ് ചെയ്യുക, അല്ലെങ്കിൽ മുകളിലെ <b>Category</b> button അമർത്തുക.</li>
     <li><b>Open ↗</b> അമർത്തിയാൽ app പുതിയ tab-ൽ തുറക്കും. <b>Copy link</b> അമർത്തി link മറ്റുള്ളവർക്ക് share ചെയ്യാം.</li>
     <li><b>🔒 Password</b> ഉള്ള app-ൽ "Enter password to open" അമർത്തി password നൽകുക. Password app-ന്റെ owner-നോട് ചോദിക്കുക.</li>
+    <li><b>💬 Comments</b> button അമർത്തി app-നെക്കുറിച്ച് അഭിപ്രായം എഴുതാം. എല്ലാവർക്കും എല്ലാ comments-ഉം കാണാം. നിങ്ങൾ എഴുതിയ comment നിങ്ങൾക്ക് <b>Delete</b> ചെയ്യാം (എഴുതിയ അതേ phone/browser-ൽ മാത്രം). Owner-ന് ഏത് comment-ഉം delete ചെയ്യാം.</li>
     <li><b>By stage / All apps</b> button: stage അനുസരിച്ച് തിരിച്ച് കാണാനോ എല്ലാം ഒരുമിച്ച് കാണാനോ.</li>
   </ol>
   <h3>Stages എന്താണ്?</h3>
@@ -245,6 +257,7 @@ const CFG={
   adminEmail:"dinojmkhan@gmail.com",                       // the ONE email allowed to edit (must match firestore.rules)
   appsCollection:"hubApps",
   metaCollection:"hubMeta", metaDoc:"main",
+  commentsCollection:"hubComments",
   sdk:"https://www.gstatic.com/firebasejs/10.14.1/"
 };
 if(window.HUB_CONFIG) Object.assign(CFG,window.HUB_CONFIG);   // used only for testing
@@ -272,7 +285,9 @@ const STAGE_ORDER=['live','beta','dev','planned','maintenance'];
 const NEED_URL=['live','beta','maintenance'];
 const stOf=a=>STAGES[a&&a.status]?a.status:'live';
 
-let apps=[],meta={...DEFAULT_META},editing=false,cat="All",qtext="",loadErr="";
+let apps=[],comments=[],cErr=false,meta={...DEFAULT_META},editing=false,cat="All",qtext="",loadErr="";
+const openC=new Set();   // apps whose comment panel is open
+const realUser=()=>Store.user&&!Store.user.isAnonymous?Store.user:null;   // anonymous commenters are not "signed in"
 let view='stage';try{view=localStorage.getItem('iti-hub-view')||'stage';}catch(e){}
 const unlocked={};   // id -> {c, url}  (kept in memory only, until the page is closed)
 
@@ -344,6 +359,10 @@ const Local={
   async getMeta(){return {...DEFAULT_META,...this._r().meta};},
   async setMeta(m){const d=this._r();d.meta={...m};this._w();},
   async replaceAll(list){const d=this._r();d.apps=list.map((a,i)=>({...a,id:'a'+Date.now().toString(36)+i}));this._w();},
+  uid(){return 'local';},
+  async listComments(){return (this._r().comments||[]).map(c=>({...c}));},
+  async addComment(c){const d=this._r();d.comments=d.comments||[];const r={...c,uid:'local',createdAt:Date.now(),id:'c'+Date.now().toString(36)+Math.random().toString(36).slice(2,5)};d.comments.push(r);this._w();return r;},
+  async delComment(id){const d=this._r();d.comments=(d.comments||[]).filter(c=>c.id!==id);this._w();},
   onAuth(){},async signIn(){},async signOut(){}
 };
 
@@ -383,9 +402,17 @@ const Fire={
   async setOrders(pairs){const F=this.F,b=F.writeBatch(this.db);pairs.forEach(([id,o])=>b.update(F.doc(this.db,CFG.appsCollection,id),{order:o}));await b.commit();},
   async getMeta(){try{const s=await this.F.getDoc(this.F.doc(this.db,CFG.metaCollection,CFG.metaDoc));return {...DEFAULT_META,...(s.exists()?s.data():{})};}catch(e){return {...DEFAULT_META};}},
   async setMeta(m){await this.F.setDoc(this.F.doc(this.db,CFG.metaCollection,CFG.metaDoc),m);},
+  uid(){return this.auth&&this.auth.currentUser?this.auth.currentUser.uid:null;},
+  async listComments(){const s=await this.F.getDocs(this.F.collection(this.db,CFG.commentsCollection));return s.docs.map(d=>({id:d.id,...d.data()}));},
+  async addComment(c){
+    if(!this.auth.currentUser)await this.Au.signInAnonymously(this.auth);   // invisible: visitors never see a login
+    const data={appId:c.appId,uid:this.auth.currentUser.uid,name:c.name,text:c.text,createdAt:Date.now()};
+    const r=await this.F.addDoc(this.F.collection(this.db,CFG.commentsCollection),data);return {...data,id:r.id};
+  },
+  async delComment(id){await this.F.deleteDoc(this.F.doc(this.db,CFG.commentsCollection,id));},
   async replaceAll(list){for(const a of list)await this.save({...a,id:undefined});}
 };
-const Dead={mode:'dead',user:null,isOwner:()=>false,list:async()=>[],getMeta:async()=>({...DEFAULT_META}),onAuth(){},signOut(){}};
+const Dead={mode:'dead',user:null,uid:()=>null,listComments:async()=>[],isOwner:()=>false,list:async()=>[],getMeta:async()=>({...DEFAULT_META}),onAuth(){},signOut(){}};
 let Store=Local,initErr='';
 
 /* ================= rendering ================= */
@@ -395,7 +422,7 @@ function banners(){
   if(loadErr)return setBanner('err','Could not load the apps: '+esc(loadErr));
   if(Store.mode==='local')return setBanner('warn','<b>Preview mode.</b> This page is not connected to Firebase, so anything you add is saved only in this browser. Connect Firebase (see README) to share it with everyone.');
   if(Store.offline)return setBanner('info','You appear to be offline. Showing the last list saved on this device.');
-  if(Store.user&&!owner())return setBanner('warn','Signed in as '+esc(Store.user.email)+'. This account is not the owner, so editing is disabled.'+(CFG.adminEmail?'':' (adminEmail is not set in the page config.)'));
+  if(realUser()&&!owner())return setBanner('warn','Signed in as '+esc(realUser().email)+'. This account is not the owner, so editing is disabled.'+(CFG.adminEmail?'':' (adminEmail is not set in the page config.)'));
   setBanner('','');
 }
 function ownerBar(){
@@ -404,7 +431,7 @@ function ownerBar(){
     h=`<button class="btn ${editing?'on':''}" id="bEdit">✎ Edit mode ${editing?'on':'off'}</button>`;
   }else if(Store.mode==='dead'){
     h='';
-  }else if(!Store.user){
+  }else if(!realUser()){
     h=`<button class="btn" id="bLogin">Owner login</button>`;
   }else{
     if(owner())h+=`<button class="btn ${editing?'on':''}" id="bEdit">✎ Edit mode ${editing?'on':'off'}</button>`;
@@ -432,6 +459,20 @@ function stepsHtml(s){
   const step=STAGES[s].step;if(s==='live'||s==='maintenance')return '';
   return `<div class="steps" title="Stage: ${esc(STAGES[s].label)}">`+['Planned','Building','Beta','Live'].map((l,k)=>`<div class="s ${k+1<=step?'on':''} ${k+1===step?'cur':''}"><i></i><span>${l}</span></div>`).join('')+`</div>`;
 }
+const fmtDate=t=>{try{return new Date(t).toLocaleDateString('en-IN',{day:'numeric',month:'short',year:'numeric'});}catch(e){return '';}};
+function commentsHtml(a){
+  const list=comments.filter(c=>c.appId===a.id).sort((x,y)=>(x.createdAt||0)-(y.createdAt||0)),n=list.length,open=openC.has(a.id);
+  const btn=`<button class="btn sm cbtn" data-act="cm">💬 ${open?'Hide comments':(n?n+' comment'+(n===1?'':'s'):'Add a comment')}</button>`;
+  if(!open)return `<div class="cwrap">${btn}</div>`;
+  const me=Store.uid&&Store.uid();
+  const rows=n?list.map(c=>{
+    const mine=owner()||(me&&c.uid===me);
+    return `<div class="cm"><div class="h"><b>${esc(c.name||'Anonymous')}</b><small>${esc(fmtDate(c.createdAt))}</small>${mine?`<button class="x" data-act="cdel" data-cid="${esc(c.id)}">🗑 Delete</button>`:''}</div><div class="t">${esc(c.text)}</div></div>`;
+  }).join(''):'<div class="cnone">No comments yet. Be the first to comment.</div>';
+  const warn=cErr?'<div class="cnone">Comments are not set up yet. The owner needs to finish the Firebase setup.</div>':'';
+  let nm='';try{nm=localStorage.getItem('iti-hub-name')||'';}catch(e){}
+  return `<div class="cwrap">${btn}<div class="cpanel">${warn}${rows}<div class="cform"><input class="cname" maxlength="40" placeholder="Your name (optional)" value="${esc(nm)}"><textarea class="ctext" maxlength="500" placeholder="Write your comment…"></textarea><div class="err cerr"></div><button class="btn pri sm" data-act="cpost">Post comment</button></div></div></div>`;
+}
 function cardHtml(a){
   const s=stOf(a),S=STAGES[s],hid=a.visible===false,P=pool(a),k=P.findIndex(x=>x.id===a.id);
   const ribbon=s==='maintenance'?`<div class="ribbon">🔧 Under maintenance${a.note?' · '+esc(a.note):''}</div>`:'';
@@ -445,7 +486,7 @@ function cardHtml(a){
       <div class="meta"><span class="tag st">${S.icon} ${S.label}</span>${a.category?`<span class="tag">${esc(a.category)}</span>`:''}${a.lock?'<span class="tag lk">🔒 Password</span>':''}${hid?'<span class="tag hid">Hidden</span>':''}</div>
       ${stepsHtml(s)}
     </div>
-    ${actsHtml(a,s)}
+    ${actsHtml(a,s)}${commentsHtml(a)}
     <div class="edit">
       <button class="btn sm" data-act="edit">✎ Edit</button>
       <button class="btn sm" data-act="up" ${k<=0?'disabled':''} title="Move earlier">▲</button>
@@ -485,6 +526,7 @@ function render(){
 async function reload(){
   try{loadErr=initErr;apps=await Store.list();}catch(e){loadErr=e&&e.message?e.message:String(e);apps=[];}
   try{meta=await Store.getMeta();}catch(e){}
+  try{comments=await Store.listComments();cErr=false;}catch(e){comments=[];cErr=true;}
   render();
 }
 
@@ -575,6 +617,24 @@ $('#fUnlock').onsubmit=async e=>{
   go.disabled=false;
 };
 
+let lastPost=0;
+async function refreshComments(){try{comments=await Store.listComments();cErr=false;}catch(e){comments=[];cErr=true;}render();}
+async function postComment(b,a){
+  const card=b.closest('.card'),er=card.querySelector('.cerr'),name=card.querySelector('.cname').value.trim(),text=card.querySelector('.ctext').value.trim();
+  er.textContent='';
+  if(!text){er.textContent='Please write a comment first.';return;}
+  if(Date.now()-lastPost<8000){er.textContent='Please wait a few seconds before posting again.';return;}
+  b.disabled=true;
+  try{
+    await Store.addComment({appId:a.id,name:name||(owner()?'Owner':'Anonymous'),text});
+    lastPost=Date.now();try{localStorage.setItem('iti-hub-name',name);}catch(x){}
+    await refreshComments();toast('Comment posted');
+  }catch(e){
+    const c=e&&e.code;
+    er.textContent=(c==='auth/operation-not-allowed'||c==='auth/admin-restricted-operation')?'Commenting needs “Anonymous” sign-in to be enabled in Firebase.':(c==='permission-denied')?'Comments are not allowed yet. The owner needs to publish the new Firestore rules.':'Could not post the comment. Please try again.';
+    b.disabled=false;
+  }
+}
 $('#grid').onclick=e=>{
   const b=e.target.closest('button[data-act]');if(!b||b.disabled)return;
   const id=b.closest('.card').dataset.id,a=apps.find(x=>x.id===id);if(!a)return;
@@ -584,6 +644,9 @@ $('#grid').onclick=e=>{
     if(navigator.clipboard&&navigator.clipboard.writeText)navigator.clipboard.writeText(u).then(done,()=>notify(u,'Copy this link'));else notify(u,'Copy this link');
   }
   if(act==='unlock')openUnlock(a);
+  if(act==='cm'){if(openC.has(id))openC.delete(id);else openC.add(id);render();return;}
+  if(act==='cpost'){postComment(b,a);return;}
+  if(act==='cdel'){const cid=b.dataset.cid;ask({title:'Delete comment',msg:'Delete this comment?',danger:true,ok:'Delete'}).then(ok=>{if(ok)guarded(async()=>{await Store.delComment(cid);await refreshComments();toast('Comment deleted');});});return;}
   if(!owner())return;
   if(act==='edit')openApp(a);
   if(act==='vis')guarded(async()=>{await Store.save({...a,visible:a.visible===false});await reload();});
@@ -598,7 +661,7 @@ $('#grid').onclick=e=>{
     const A=list.find(x=>x.id===id),B=list.find(x=>x.id===t.id);[A.o,B.o]=[B.o,A.o];
     await Store.setOrders(list.map(x=>[x.id,x.o]));await reload();
   });
-  if(act==='del')ask({title:'Delete app',msg:`Delete “${a.name}” from the hub? Visitors will no longer see it.`,danger:true,ok:'Delete'}).then(ok=>{if(ok)guarded(async()=>{await Store.remove(id);await reload();toast('App deleted');});});
+  if(act==='del')ask({title:'Delete app',msg:`Delete “${a.name}” from the hub? Visitors will no longer see it.`,danger:true,ok:'Delete'}).then(ok=>{if(ok)guarded(async()=>{await Store.remove(id);try{for(const c of comments.filter(c=>c.appId===id))await Store.delComment(c.id);}catch(x){}await reload();toast('App deleted');});});
 };
 $('#chips').onclick=e=>{const b=e.target.closest('.chip');if(!b)return;cat=b.dataset.c;render();};
 $('#seg').onclick=e=>{const b=e.target.closest('button');if(!b)return;view=b.dataset.v;try{localStorage.setItem('iti-hub-view',view);}catch(x){}render();};
@@ -647,7 +710,7 @@ $('#fLogin').onsubmit=async e=>{
   }
   if(Store===Fire){
     let first=true;
-    Fire.onAuth(async()=>{if(!first){editing=editing&&Fire.isOwner();}first=false;await reload();});
+    Fire.onAuth(async u=>{if(first){first=false;await reload();return;}if(u&&u.isAnonymous)return;editing=editing&&Fire.isOwner();await reload();});
   }else{await reload();}
 })();
 </script>
