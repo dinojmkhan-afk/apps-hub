@@ -93,6 +93,7 @@ main.wrap{padding:18px}
 .edit{display:none;gap:5px;flex-wrap:wrap;border-top:1px solid var(--line);padding-top:8px;margin-top:4px}
 body.editing .edit{display:flex}
 .empty{background:#fff;border:1px dashed var(--line);border-radius:14px;padding:34px 18px;text-align:center;color:var(--mut)}
+.aiNote{margin-top:8px;padding:8px 12px;background:#eef2f8;border:1px solid var(--line);border-radius:9px;font-size:12.5px}
 footer{max-width:1120px;margin:10px auto 40px;padding:0 18px;color:var(--mut);font-size:13px;text-align:center}
 .modal{display:none;position:fixed;inset:0;background:rgba(15,22,34,.5);z-index:50;align-items:center;justify-content:center;padding:14px;overflow:auto}
 .modal.on{display:flex}
@@ -145,7 +146,7 @@ input:focus,textarea:focus,select:focus{outline:2px solid #9ec0ee;border-color:v
   </div>
   <div class="grid" id="grid"></div>
 </main>
-<footer id="foot"></footer>
+<footer><div id="foot"></div><div class="aiNote">🤖 These apps were built with the help of AI and are checked and improved regularly. As with any tool, please review printed or submitted output before official use.</div></footer>
 
 <!-- dialogs -->
 <div class="modal" id="mConfirm"><div class="box"><h2 id="cTitle"></h2><p id="cMsg"></p><input class="full" id="cInput" autocomplete="off" hidden style="margin-bottom:12px"><div class="foot"><button class="btn" id="cNo">Cancel</button><button class="btn pri" id="cYes">OK</button></div></div></div>
