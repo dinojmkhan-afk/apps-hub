@@ -104,6 +104,10 @@ label.f{display:block;font-size:13px;color:var(--mut);margin-bottom:10px}
 label.f input[type=text],label.f input[type=email],label.f input[type=password],label.f input[type=url],label.f textarea,label.f select,.box input.full{display:block;width:100%;margin-top:3px;font:inherit;color:var(--ink);border:1px solid #c5ccd8;border-radius:8px;padding:8px 10px;background:#fff}
 label.f textarea{min-height:70px;resize:vertical}
 input:focus,textarea:focus,select:focus{outline:2px solid #9ec0ee;border-color:var(--pri)}
+.guide h3{margin:12px 0 4px;font-size:15px;color:var(--pri)}
+.guide p,.guide li{font-size:14px;line-height:1.7}
+.guide ol,.guide ul{margin:0 0 6px;padding-left:20px}
+.guide .aiG{background:#eef2f8;border-radius:9px;padding:8px 12px;margin-top:12px}
 .hint{font-size:12.5px;color:var(--mut);margin:-4px 0 10px}
 .lockrow{display:flex;gap:8px;align-items:center;color:var(--ink)!important;font-weight:600}
 .lockbox{background:#f6f8fc;border:1px solid var(--line);border-radius:10px;padding:10px 12px;margin-bottom:10px}
@@ -123,7 +127,7 @@ input:focus,textarea:focus,select:focus{outline:2px solid #9ec0ee;border-color:v
 <header class="top"><div class="wrap">
   <div class="row1">
     <div><h1 id="hTitle">ITI Apps Hub</h1><p id="hSub">Apps and tools for instructors and trainees</p></div>
-    <div class="ownerbar" id="ownerBar"></div>
+    <div class="ownerbar"><button class="btn" id="bHelp">❓ Guide / ഗൈഡ്</button><span id="ownerBar" style="display:contents"></span></div>
   </div>
   <div class="search"><input id="q" type="search" placeholder="Search apps…" autocomplete="off" aria-label="Search apps"></div>
 </div></header>
@@ -157,6 +161,33 @@ input:focus,textarea:focus,select:focus{outline:2px solid #9ec0ee;border-color:v
   <div class="err" id="lErr"></div>
   <div class="foot"><button type="button" class="btn" id="lCancel">Cancel</button><button class="btn pri" id="lGo">Sign in with Google</button></div>
 </form></div>
+
+<div class="modal" id="mHelp"><div class="box" style="max-width:600px">
+  <h2>ℹ️ User Guide / ഉപയോഗ ഗൈഡ്</h2>
+  <div class="guide">
+  <h3>ഈ app എന്തിന്?</h3>
+  <p>ITI Apps Hub: ഇൻസ്ട്രക്ടർമാർക്കും ട്രെയിനികൾക്കും വേണ്ട എല്ലാ apps-ഉം ഒരേ സ്ഥലത്ത്, ഒരൊറ്റ link-ൽ കാണാനും തുറക്കാനും ഉള്ള page ആണിത്. Login ആവശ്യമില്ല.</p>
+  <h3>എങ്ങനെ ഉപയോഗിക്കാം?</h3>
+  <ol>
+    <li><b>Search</b> box-ൽ app-ന്റെ പേര് ടൈപ്പ് ചെയ്യുക, അല്ലെങ്കിൽ മുകളിലെ <b>Category</b> button അമർത്തുക.</li>
+    <li><b>Open ↗</b> അമർത്തിയാൽ app പുതിയ tab-ൽ തുറക്കും. <b>Copy link</b> അമർത്തി link മറ്റുള്ളവർക്ക് share ചെയ്യാം.</li>
+    <li><b>🔒 Password</b> ഉള്ള app-ൽ "Enter password to open" അമർത്തി password നൽകുക. Password app-ന്റെ owner-നോട് ചോദിക്കുക.</li>
+    <li><b>By stage / All apps</b> button: stage അനുസരിച്ച് തിരിച്ച് കാണാനോ എല്ലാം ഒരുമിച്ച് കാണാനോ.</li>
+  </ol>
+  <h3>Stages എന്താണ്?</h3>
+  <ul>
+    <li>✅ <b>Live</b>: ഉപയോഗിക്കാൻ തയ്യാർ</li>
+    <li>🧪 <b>Beta testing</b>: ടെസ്റ്റ് ചെയ്യുന്നു, ഉപയോഗിച്ച് അഭിപ്രായം അറിയിക്കുക</li>
+    <li>🛠️ <b>In development</b>: നിർമ്മാണത്തിലാണ്</li>
+    <li>💡 <b>Coming soon</b>: ഉടൻ വരും</li>
+    <li>🔧 <b>Under maintenance</b>: grey ആയി കാണും, താൽക്കാലികമായി ലഭ്യമല്ല</li>
+  </ul>
+  <h3>Owner-ന് മാത്രം</h3>
+  <p><b>Owner login</b> (Google) &rarr; <b>Edit mode</b> &rarr; <b>+ Add app</b>. ഇവിടെ app add, edit, hide, reorder, delete ചെയ്യാം; password, stage, maintenance note എന്നിവയും നൽകാം.</p>
+  <p class="aiG">🤖 എല്ലാ apps-ഉം AI സഹായത്തോടെ നിർമ്മിച്ചവയാണ്. Print ചെയ്തതോ submit ചെയ്യുന്നതോ ആയ output ഔദ്യോഗിക ഉപയോഗത്തിന് മുമ്പ് ഒന്ന് പരിശോധിക്കുക.</p>
+  </div>
+  <div class="foot"><button class="btn pri" id="hClose">Close</button></div>
+</div></div>
 
 <div class="modal" id="mUnlock"><form class="box" id="fUnlock">
   <h2>🔒 <span id="uName"></span></h2>
@@ -249,7 +280,7 @@ const unlocked={};   // id -> {c, url}  (kept in memory only, until the page is 
 function toast(msg){const t=$('#toast');t.textContent=msg;t.classList.add('on');clearTimeout(toast._t);toast._t=setTimeout(()=>t.classList.remove('on'),2200);}
 function openM(id){$(id).classList.add('on');}
 function closeM(id){$(id).classList.remove('on');}
-document.addEventListener('keydown',e=>{if(e.key==='Escape'){['#mLogin','#mApp','#mMeta','#mUnlock'].forEach(closeM);}});
+document.addEventListener('keydown',e=>{if(e.key==='Escape'){['#mLogin','#mApp','#mMeta','#mUnlock','#mHelp'].forEach(closeM);}});
 function ask(o){
   return new Promise(res=>{
     const yes=$('#cYes'),no=$('#cNo'),inp=$('#cInput');
@@ -529,6 +560,7 @@ $('#fApp').onsubmit=async e=>{
 /* ---- unlock dialog (for visitors) ---- */
 let unlockId=null;
 function openUnlock(a){unlockId=a.id;$('#uName').textContent=a.name;$('#uPw').value='';$('#uErr').textContent='';openM('#mUnlock');setTimeout(()=>$('#uPw').focus(),30);}
+$('#bHelp').onclick=()=>openM('#mHelp');$('#hClose').onclick=()=>closeM('#mHelp');
 $('#uCancel').onclick=()=>closeM('#mUnlock');
 $('#fUnlock').onsubmit=async e=>{
   e.preventDefault();
